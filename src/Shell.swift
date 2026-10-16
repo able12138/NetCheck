@@ -116,13 +116,12 @@ enum Shell {
                 p.standardError = Pipe()
                 do { try p.run() } catch { cont.resume(returning: ""); return }
 
-                let lock = NSLock()
-                var data = Data()
+                let buf = DataBuffer()
                 let fh = op.fileHandleForReading
                 fh.readabilityHandler = { h in
                     let chunk = h.availableData
                     if chunk.isEmpty { h.readabilityHandler = nil; return }
-                    lock.lock(); data.append(chunk); lock.unlock()
+                    buf.append(chunk)
                 }
                 // 等待指定时长（或进程自行退出）
                 let deadline = Date().addingTimeInterval(seconds)
@@ -131,11 +130,27 @@ enum Shell {
                 }
                 if p.isRunning { p.terminate() }
                 fh.readabilityHandler = nil
-                let rest = fh.readDataToEndOfFile()
-                lock.lock(); data.append(rest); let out = String(data: data, encoding: .utf8) ?? ""; lock.unlock()
+                buf.append(fh.readDataToEndOfFile())
+                let out = buf.string
                 p.waitUntilExit()
                 cont.resume(returning: out)
             }
         }
+    }
+}
+
+/// 线程安全的字节缓冲：`readabilityHandler` 在其它队列上回调，
+/// 不能用 `var data` 捕获（Swift 6 会报 "mutation of captured var in concurrently-executing code"）
+private final class DataBuffer: @unchecked Sendable {
+    private let lock = NSLock()
+    private var data = Data()
+
+    func append(_ chunk: Data) {
+        lock.lock(); data.append(chunk); lock.unlock()
+    }
+
+    var string: String {
+        lock.lock(); defer { lock.unlock() }
+        return String(data: data, encoding: .utf8) ?? ""
     }
 }

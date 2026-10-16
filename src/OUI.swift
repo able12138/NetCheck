@@ -1,22 +1,24 @@
 import Foundation
 
 /// IEEE OUI 厂商库（随 App 打包，离线查询）
-final class OUIDB {
+///
+/// 并发说明：`map` 首次查询时惰性构建、之后只读；用锁保护，故标记 `@unchecked Sendable`。
+final class OUIDB: @unchecked Sendable {
     static let shared = OUIDB()
     private var map: [String: String] = [:]
-    private var loaded = false
+    private let lock = NSLock()
 
     private init() {}
 
-    private func load() {
-        guard !loaded else { return }
-        loaded = true
+    private func loadIfNeeded() {
+        lock.lock()
+        defer { lock.unlock() }
+        guard map.isEmpty else { return }
         var candidates: [URL] = []
         if let u = Bundle.main.url(forResource: "ieee-oui", withExtension: "txt") { candidates.append(u) }
         let exeDir = URL(fileURLWithPath: CommandLine.arguments[0]).deletingLastPathComponent()
         candidates.append(exeDir.appendingPathComponent("ieee-oui.txt"))
         candidates.append(exeDir.appendingPathComponent("../Resources/ieee-oui.txt"))
-        candidates.append(URL(fileURLWithPath: "/Applications/okawifi.app/Contents/Resources/ieee-oui.txt"))
         var text: String?
         for c in candidates {
             if let t = try? String(contentsOf: c, encoding: .utf8), !t.isEmpty { text = t; break }
@@ -33,9 +35,10 @@ final class OUIDB {
     }
 
     func vendor(for mac: String) -> String? {
-        load()
+        loadIfNeeded()
         let hex = mac.uppercased().replacingOccurrences(of: ":", with: "")
         guard hex.count >= 6 else { return nil }
+        lock.lock(); defer { lock.unlock() }
         if hex.count >= 9, let v = map[String(hex.prefix(9))] { return v }
         if hex.count >= 7, let v = map[String(hex.prefix(7))] { return v }
         return map[String(hex.prefix(6))]
