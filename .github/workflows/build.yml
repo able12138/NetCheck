@@ -1,0 +1,77 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: 构建通用二进制
+    runs-on: macos-14
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 环境信息
+        run: |
+          sw_vers
+          uname -m
+          xcode-select -p
+          swiftc --version
+
+      - name: 构建（Intel + Apple Silicon 通用二进制）
+        run: ./build.sh --universal
+
+      - name: 校验产物架构与签名
+        run: |
+          set -e
+          APP="build/网络体检.app"
+          test -d "$APP" || { echo "::error::未产出 .app"; exit 1; }
+          lipo -archs "$APP/Contents/MacOS/NetCheckCN" | tee /tmp/archs
+          grep -q x86_64 /tmp/archs || { echo "::error::缺少 x86_64"; exit 1; }
+          grep -q arm64  /tmp/archs || { echo "::error::缺少 arm64"; exit 1; }
+          codesign -dv "$APP" 2>&1 | grep -E "Identifier|Signature" || true
+          /usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "$APP/Contents/Info.plist"
+
+      - name: 界面冒烟测试（离屏渲染全部六页，捕获运行时崩溃）
+        run: |
+          ./tools/uishot.sh /tmp/shots
+          ls -la /tmp/shots
+          test "$(ls /tmp/shots/*.png 2>/dev/null | wc -l | tr -d ' ')" = "6" \
+            || { echo "::error::未渲染出 6 张界面快照"; exit 1; }
+
+      - name: 打包
+        run: |
+          mkdir -p dist
+          NAME="NetCheck-${GITHUB_REF_NAME:-dev}-macos-universal"
+          mkdir -p "dist/stage/$NAME"
+          cp -R "build/网络体检.app" "dist/stage/$NAME/"
+          cp INSTALL.txt "dist/stage/$NAME/安装说明.txt"
+          cd dist/stage && ditto -c -k --sequesterRsrc --keepParent "$NAME" "../$NAME.zip"
+          cd .. && rm -rf stage
+          shasum -a 256 *.zip | tee SHA256SUMS.txt
+          ls -lh
+
+      - name: 上传构建产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: NetCheck-macos-universal
+          path: |
+            dist/*.zip
+            dist/SHA256SUMS.txt
+          if-no-files-found: error
+
+      - name: 发布 Release（仅打 tag 时）
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*.zip
+            dist/SHA256SUMS.txt
+          generate_release_notes: false

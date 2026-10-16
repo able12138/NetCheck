@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>zh_CN</string>
+    <key>CFBundleExecutable</key>
+    <string>NetCheckCN</string>
+    <key>CFBundleIdentifier</key>
+    <string>io.github.able12138.netcheck</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundleName</key>
+    <string>网络体检</string>
+    <key>CFBundleDisplayName</key>
+    <string>网络体检</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.2.0</string>
+    <key>CFBundleVersion</key>
+    <string>1.2.0</string>
+    <key>CFBundleIconFile</key>
+    <string>AppIcon</string>
+    <key>LSMinimumSystemVersion</key>
+    <string>14.0</string>
+    <key>LSApplicationCategoryType</key>
+    <string>public.app-category.utilities</string>
+    <key>NSHighResolutionCapable</key>
+    <true/>
+    <key>NSPrincipalClass</key>
+    <string>NSApplication</string>
+    <key>NSLocationUsageDescription</key>
+    <string>用于读取 Wi-Fi 网络名称（SSID/BSSID）并分析周边无线环境。macOS 14 起系统要求授权后才显示网络名称。</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>用于读取 Wi-Fi 网络名称（SSID/BSSID）并分析周边无线环境。macOS 14 起系统要求授权后才显示网络名称。</string>
+    <key>NSHumanReadableCopyright</key>
+    <string>MIT License · NetCheck</string>
+</dict>
+</plist>

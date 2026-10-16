@@ -1,0 +1,24 @@
+# 构建产物（不入库）
+build/
+*.app
+*.o
+*.dSYM/
+*.swiftmodule
+
+# 脱敏/编辑前的备份
+*.bak
+*.orig
+*~
+
+# 日志与临时文件
+*.log
+/tmp/
+
+# macOS
+.DS_Store
+._*
+
+# 编辑器
+.vscode/
+.idea/
+xcuserdata/
