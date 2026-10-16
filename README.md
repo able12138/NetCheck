@@ -157,3 +157,17 @@ English documentation: **[README.en.md](README.en.md)**
 2. 断言产物同时含 `x86_64` 与 `arm64` 两个架构切片
 3. `./tools/uishot.sh` —— 离屏渲染全部六个界面（可捕获 SwiftUI 运行时崩溃，无需屏幕录制权限）
 4. 打包为 zip 并上传 artifact；**推送 `v*` 标签时自动创建 Release 并附上安装包与 `SHA256SUMS.txt`**
+
+---
+
+## ⭐ 支持这个项目
+
+如果这个工具帮你省下了折腾境外测速 App 的时间，欢迎点一个 **Star** —— 面向国内网络环境适配的小工具，只有被更多人看到才会有人持续维护。
+
+遇到文档没覆盖的问题，欢迎开 **Issue**（附上 macOS 版本、机型与现象即可）。想自己改的话，PR 也欢迎。
+
+[![Star](https://img.shields.io/github/stars/able12138/NetCheck?style=social)](../../stargazers)
+
+---
+
+**关键词**：macOS 测速 · 国内测速节点 · 宽带测速 · 局域网设备扫描 · WiFi 信号分析 · 信道占用 · CoreWLAN · 网络诊断 · 多出口 IP · 菜单栏网速 · 一键体检 · SwiftUI · 原生 macOS 应用 · 无遥测 · 开源测速工具

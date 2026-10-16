@@ -123,3 +123,17 @@ Developed and verified on: macOS 15.8.1 · Intel i9-9980HK / 32 GB · swiftc 6.2
 ## License
 
 [MIT](LICENSE) © 2026 able12138
+
+---
+
+## ⭐ Support this project
+
+If NetCheck saved you from wrestling with overseas speed-test apps, please consider giving it a **Star** — small tools tailored to mainland China's network environment only keep getting maintained when enough people find them.
+
+Found something the docs don't cover? Open an **Issue** with your macOS version, Mac model and what happened. Pull requests are welcome too.
+
+[![Star](https://img.shields.io/github/stars/able12138/NetCheck?style=social)](../../stargazers)
+
+---
+
+**Keywords**: macOS speed test · China speed test nodes · broadband benchmark · LAN device scanner · Wi-Fi analyzer · channel congestion · CoreWLAN · network diagnostics · multi-egress IP · menu bar network monitor · one-click network checkup · SwiftUI · native macOS app · zero telemetry · open source speed test
